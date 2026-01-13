@@ -1,4 +1,7 @@
+using Client;
+using DamageNumbersPro;
 using Leopotam.EcsLite;
+using System;
 using System.Collections.Generic; 
 using UnityEngine;
 
@@ -6,6 +9,26 @@ namespace Statement
 {
     public class BattleState : State
     {
+        public GameObject Enemy;
+        public DamageNumber DamageNumberView;
+        public BattlePanel BattlePanel;
+        public GameConfig GameConfig;
+        private int _currency;
+
+        public event Action<int> OnCurrencyChanged;
+
+        public int Currency
+        {
+            get => _currency;
+            private set
+            {
+                if (_currency == value) return;
+
+                _currency = value;
+                OnCurrencyChanged?.Invoke(_currency);
+            }
+        }
+
         public static new BattleState Instance
         {
             get
@@ -20,6 +43,10 @@ namespace Statement
         public override void Awake()
         { 
             EcsHandler = new EcsRunHandler(this);
+
+            BattlePanel.Init(this);
+
+            Currency += GameConfig.StartCurrency;
         }
 
         public override void Start() => EcsHandler?.Init(); 
@@ -36,12 +63,12 @@ namespace Statement
             _entityMap.Remove(entity);
         }
 
-        public void AddEntity(string localKey, int entity)
+        public void AddEntity(string key, int entity)
         {
-            var packed = EcsHandler.PackEntity(entity);
-
-            if (!string.IsNullOrEmpty(localKey) && !_entityMap.ContainsKey(localKey))
-                _entityMap[localKey] = packed;
+            if (!string.IsNullOrEmpty(key) && !_entityMap.ContainsKey(key))
+            { 
+                _entityMap[key] = EcsHandler.PackEntity(entity);
+            }
         }
 
         public bool TryGetPlayer(out int playerEntity)
@@ -73,6 +100,30 @@ namespace Statement
 
             unpackedEntity = -1;
             return false;
-        }  
+        }
+        public void AddCurrency(int amount)
+        {
+            if (amount <= 0) return;
+            Currency += amount;
+        }
+
+        public bool TrySpendCurrency(int amount)
+        {
+            if (amount <= 0) return false;
+            if (_currency < amount) return false;
+
+            Currency -= amount;
+            return true;
+        }
+
+        public void InvokeEntity(TowerBase tower)
+        {
+            EcsHandler.ThrowNewEvent<SpawnTowerEvent>(new SpawnTowerEvent(tower));
+        }
+
+        public void InvokeDamageView(Vector3 pos, float value)
+        {
+            DamageNumberView.Spawn(pos, value);
+        }
     }
 }

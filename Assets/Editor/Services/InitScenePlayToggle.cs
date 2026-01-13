@@ -39,7 +39,7 @@ public class InitScenePlayToggle : EditorToolbarToggle
 public static class InitSceneAutoLoader
 {
     private const string ScenePathKey = "InitSceneAutoLoader.ScenePath";
-    private const string DefaultInitSceneName = "InitScene";
+    private const string DefaultInitSceneName = "BattleScene";
 
     static InitSceneAutoLoader()
     {
