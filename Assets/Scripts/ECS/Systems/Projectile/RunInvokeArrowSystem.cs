@@ -32,7 +32,7 @@ namespace Client
                 ref var moveComp = ref _movePool.Value.Get(entity);
                 ref var arrowComp = ref _arrowPool.Value.Get(entity);
 
-                arrowComp.Delay = Vector3.Distance(destinationComp.TargetPos, transformComp.Transform.position) / moveComp.Speed;
+                arrowComp.Delay = (Vector3.Distance(destinationComp.TargetPos, transformComp.Transform.position) / moveComp.Speed) + 1f;
 
                 transformComp.Transform.gameObject.SetActive(true);
                  

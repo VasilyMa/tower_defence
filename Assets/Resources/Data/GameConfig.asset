@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d016627a8110e834c960de0d6e146fce, type: 3}
   m_Name: GameConfig
   m_EditorClassIdentifier: 
-  SpawnTime: 1
+  SpawnTime: 0.14
   SpawnCount: 1
   Health: 3
   MoveSpeed: 0.5
